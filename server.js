@@ -53,7 +53,7 @@ app.listen(PORT, () => {
 const mongoose = require('mongoose');
 
 // Replace this with your MongoDB connection string
-const uri = "mongodb+srv://raymondowen75:6GNlZ4NydYziMiSC@investorbkr0.izgb4.mongodb.net/?retryWrites=true&w=majority&appName=investorbkr0";
+const uri = "mongodb+srv://larkweb9:NtQjklo2loEAEErC@alliance.9ytuw.mongodb.net/?retryWrites=true&w=majority&appName=alliance";
 
 mongoose.connect(uri, {
   useNewUrlParser: true,

@@ -15,7 +15,7 @@ const compareHashedPassword = (hashedPassword, password) =>
 // Email transporter setup
 const createTransporter = () =>
   nodemailer.createTransport({
-    host: "mail.Copyalliance.us",
+    host: "mail.copyalliance.us",
     port: 465,
     secure: true,
     auth: {
@@ -33,7 +33,7 @@ const sendWithdrawalRequestEmail = async ({ from, amount, method, address }) => 
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
+    to: "support@copyalliance.us",
     subject: "Transaction Notification",
     html: `
       <html>
@@ -51,7 +51,7 @@ const userRegistrationEmail = async ({ firstName, email }) => {
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
+    to: "support@copyalliance.us",
     subject: "New User Registration",
     html: `
       <html>
@@ -69,7 +69,7 @@ const sendDepositEmail = async ({ from, amount, method, timestamp }) => {
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
+    to: "support@copyalliance.us",
     subject: "Transaction Notification",
     html: `
       <html>
@@ -108,7 +108,7 @@ const sendVerificationEmail = async ({ from, url }) => {
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
+    to: "support@copyalliance.us",
     subject: "Account Verification Notification",
     html: `
       <html>

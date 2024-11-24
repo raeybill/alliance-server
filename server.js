@@ -1,21 +1,22 @@
-var createError = require("http-errors");
-var express = require("express");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const createError = require("http-errors");
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
+const mongoose = require("mongoose");
 
-var indexRouter = require("./routes/index");
-var loginAuthRouter = require("./routes/auth/login");
-var verifyAuthRouter = require("./routes/auth/verify-email");
-var transactionsRouter = require("./routes/transactions");
-var registerAuthRouter = require("./routes/auth/register");
-var fogortPasswordAuthRouter = require("./routes/auth/forgot-password");
-var usersRouter = require("./routes/users");
+// Routes
+const indexRouter = require("./routes/index");
+const loginAuthRouter = require("./routes/auth/login");
+const verifyAuthRouter = require("./routes/auth/verify-email");
+const registerAuthRouter = require("./routes/auth/register");
+const forgotPasswordAuthRouter = require("./routes/auth/forgot-password");
+const transactionsRouter = require("./routes/transactions");
+const usersRouter = require("./routes/users");
 
-var app = express();
-var PORT = process.env.PORT || 8080;
+const app = express();
+const PORT = 8080; // Default port
+const MONGO_URI = "mongodb+srv://larkweb9:NtQjklo2loEAEErC@alliance.9ytuw.mongodb.net/?retryWrites=true&w=majority&appName=alliance"; // Replace with your MongoDB connection string
 
 // Middleware setup
 app.use(logger("dev"));
@@ -27,17 +28,18 @@ app.use(cors());
 // Routes setup
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/auth", loginAuthRouter);
-app.use("/auth", verifyAuthRouter);
-app.use("/auth", registerAuthRouter);
-app.use("/auth", fogortPasswordAuthRouter);
+app.use("/auth/login", loginAuthRouter);
+app.use("/auth/verify-email", verifyAuthRouter);
+app.use("/auth/register", registerAuthRouter);
+app.use("/auth/forgot-password", forgotPasswordAuthRouter);
 app.use("/transactions", transactionsRouter);
 
-// Error handling
+// Error handling for 404 (Not Found)
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
+// General error handling
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -50,14 +52,11 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-const mongoose = require('mongoose');
-
-// Replace this with your MongoDB connection string
-const uri = "mongodb+srv://larkweb9:NtQjklo2loEAEErC@alliance.9ytuw.mongodb.net/?retryWrites=true&w=majority&appName=alliance";
-
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch((error) => console.error('Error connecting to MongoDB:', error));
+// MongoDB Connection
+mongoose
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((error) => console.error("Error connecting to MongoDB:", error));

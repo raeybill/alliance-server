@@ -15,7 +15,7 @@ const compareHashedPassword = (hashedPassword, password) =>
 // Email transporter setup
 const createTransporter = () =>
   nodemailer.createTransport({
-    host: "mail.copyalliance.us",
+    host: "mail.investorbasekr.org",
     port: 465,
     secure: true,
     auth: {
@@ -33,14 +33,14 @@ const sendWithdrawalRequestEmail = async ({ from, amount, method, address }) => 
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@copyalliance.us",
+    to: "support@investorbasekr.org",
     subject: "Transaction Notification",
     html: `
       <html>
       <p>Hello Chief,</p>
       <p>${from} wants to withdraw $${amount} worth of ${method} into ${address} wallet address.</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });
@@ -51,14 +51,14 @@ const userRegistrationEmail = async ({ firstName, email }) => {
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@copyalliance.us",
+    to: "support@investorbasekr.org",
     subject: "New User Registration",
     html: `
       <html>
       <p>Hello Chief,</p>
       <p>${firstName} with email ${email} just signed up. Please visit your dashboard for confirmation.</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });
@@ -69,7 +69,7 @@ const sendDepositEmail = async ({ from, amount, method, timestamp }) => {
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@copyalliance.us",
+    to: "support@investorbasekr.org",
     subject: "Transaction Notification",
     html: `
       <html>
@@ -77,7 +77,7 @@ const sendDepositEmail = async ({ from, amount, method, timestamp }) => {
       <p>${from} sent $${amount} worth of ${method}. Please confirm the transaction and update their balance on your dashboard.</p>
       <p>Timestamp: ${timestamp}</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });
@@ -94,10 +94,10 @@ const sendForgotPasswordEmail = async (email) => {
       <html>
       <p>Dear User,</p>
       <p>Forgot your password? Click the link below to reset it:</p>
-      <p><a href="https://Copyalliance.us/user/password/reset.html">Reset Password</a></p>
+      <p><a href="https://investorbasekr.org/reset-password">Reset Password</a></p>
       <p>If you did not request this, please ignore this email.</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });
@@ -108,15 +108,15 @@ const sendVerificationEmail = async ({ from, url }) => {
   const transporter = createTransporter();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_USER,
-    to: "support@copyalliance.us",
+    to: "support@investorbasekr.org",
     subject: "Account Verification Notification",
     html: `
       <html>
       <p>Hello Chief,</p>
-      <p>${from} just verified their Copy alliance identity.</p>
+      <p>${from} just verified their IBKR identity.</p>
       <p>Click <a href="${url}">here</a> to view the document.</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });
@@ -131,11 +131,11 @@ const sendWelcomeEmail = async ({ to }) => {
     subject: "Account Verification",
     html: `
       <html>
-      <h2>Welcome to Copy alliance</h2>
+      <h2>Welcome to IBKR</h2>
       <p>Please confirm your email to secure your account.</p>
       <p>Your OTP is: ${generateOtp()}</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });
@@ -150,11 +150,11 @@ const sendPasswordOtp = async ({ to }) => {
     subject: "Password Reset OTP",
     html: `
       <html>
-      <h2>Copy alliance Password Reset</h2>
+      <h2>IBKR Password Reset</h2>
       <p>Your OTP is: ${generateOtp()}</p>
       <p>This OTP is valid for a short period. Do not share it with anyone.</p>
       <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
+      <p>IBKR Team</p>
       </html>
     `,
   });

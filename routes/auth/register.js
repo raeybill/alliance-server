@@ -28,7 +28,7 @@ router.post("/register", async (req, res) => {
     if (user) {
       return res.status(400).json({
         success: false,
-        message: "Email address is already taken",
+        message: "Email address is already in use",
       });
     }
 

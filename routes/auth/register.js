@@ -1,5 +1,5 @@
 var express = require("express");
-var { hashPassword,sendPasswordOtp,userRegisteration, sendWelcomeEmail,resendWelcomeEmail,resetEmail, sendUserDetails, userRegisteration } = require("../../utils");
+var { hashPassword,sendPasswordOtp, sendwelcomeEmail,resendWelcomeEmail,resetEmail, sendUserDetails } = require("../../utils");
 const UsersDatabase = require("../../models/User");
 var router = express.Router();
 const { v4: uuidv4 } = require("uuid");
@@ -19,7 +19,7 @@ function generateReferralCode(length) {
 
 
 router.post("/register", async (req, res) => {
-  const { firstName, lastName, email, password, country, referralCode,phone} = req.body;
+  const { firstName, lastName, email, password, country, referralCode } = req.body;
 
   try {
     // Check if any user has that email
@@ -51,16 +51,14 @@ router.post("/register", async (req, res) => {
       firstName,
       lastName,
       email,
+      kyc:"unverified",
       password: hashPassword(password),
       country,
-      trader:"",
-      phone:phone,
       amountDeposited: " You are not eligible to view livestream of ongoing trade.Kindly contact your trader or support.",
       profit: 0,
       balance: 0,
       copytrading:0,
       plan:" ",
-      kyc:"unverified",
       condition:" ",
       referalBonus: 0,
       transactions: [],
@@ -104,8 +102,7 @@ router.post("/register", async (req, res) => {
     // Create the new user in the database
     const createdUser = await UsersDatabase.create(newUser);
     const token = uuidv4();
-    sendWelcomeEmail({ to: email, token });
-userRegisteration({firstName,email});
+    sendwelcomeEmail({ to: email, token });
 
     return res.status(200).json({ code: "Ok", data: createdUser });
   } catch (error) {

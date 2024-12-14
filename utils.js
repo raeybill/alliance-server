@@ -1,174 +1,855 @@
 const bcrypt = require("bcryptjs");
-const axios = require("axios");
-const nodemailer = require("nodemailer");
-const speakeasy = require("speakeasy");
-
 const salt = bcrypt.genSaltSync(10);
-const secret = speakeasy.generateSecret({ length: 20 });
+const axios = require("axios");
+var nodemailer = require("nodemailer");
+const speakeasy = require('speakeasy');
 
-// Hashing functions
-const hashPassword = (password) => bcrypt.hashSync(password, salt);
+const secret = speakeasy.generateSecret({ length: 4 });
 
-const compareHashedPassword = (hashedPassword, password) =>
-  bcrypt.compareSync(password, hashedPassword);
+const hashPassword = (password) => {
+  const hashedPassword = bcrypt.hashSync(password, salt);
+  return hashedPassword;
+};
 
-// Email transporter setup
-const createTransporter = () =>
-  nodemailer.createTransport({
-    host: "mail.Copyalliance.us",
+const compareHashedPassword = (hashedPassword, password) => {
+  const isSame = bcrypt.compareSync(password, hashedPassword);
+  return isSame;
+};
+
+// const sendDepositEmail = async ({ from, amount, method,timestamp}) => {
+//   let transporter = nodemailer.createTransport({
+//     host: "mail.copyalliance.us",
+//     port: 465,
+//     secure: true,
+//     auth: {
+//       user: process.env.EMAIL_USER, // generated ethereal user
+//       pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+//     },
+//   });
+
+//   let info = await transporter.sendMail({
+//     from: `${process.env.EMAIL_USER}`, // sender address
+//     to: "support@copyalliance.us", // list of receivers
+//     subject: "Transaction Notification", // Subject line
+//     // text: "Hello ?", // plain text body
+//     html: `
+
+const sendWithdrawalRequestEmail = async ({  from, amount, method,address }) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
     port: 465,
     secure: true,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
     },
   });
 
-// Send OTP function
-const generateOtp = () =>
-  speakeasy.totp({ secret: secret.base32, encoding: "base32" });
-
-// Functions for sending emails
-const sendWithdrawalRequestEmail = async ({ from, amount, method, address }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
-    subject: "Transaction Notification",
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@copyalliance.us", // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
     html: `
-      <html>
-      <p>Hello Chief,</p>
-      <p>${from} wants to withdraw $${amount} worth of ${method} into ${address} wallet address.</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+
+    <html>
+    <p>Hello Chief</p>
+
+    <p>${from} wants to withdraw $${amount} worth of ${method} into ${address} wallet address.
+    </p>
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
   });
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
-const userRegistrationEmail = async ({ firstName, email }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
-    subject: "New User Registration",
-    html: `
-      <html>
-      <p>Hello Chief,</p>
-      <p>${firstName} with email ${email} just signed up. Please visit your dashboard for confirmation.</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+const userRegisteration = async ({  firstName,email}) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
   });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@copyalliance.us", // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello Chief</p>
+
+    <p>${firstName} with email ${email} just signed up.Please visit your dashboard for confirmation.
+    </p>
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
-const sendDepositEmail = async ({ from, amount, method, timestamp }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
-    subject: "Transaction Notification",
-    html: `
-      <html>
-      <p>Hello Chief,</p>
-      <p>${from} sent $${amount} worth of ${method}. Please confirm the transaction and update their balance on your dashboard.</p>
-      <p>Timestamp: ${timestamp}</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+
+const sendWithdrawalEmail = async ({  to,address, amount, method,timestamp,from }) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
   });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello ${from}</p>
+
+    <p>You just sent a withdrawal request.
+    </p>
+    <p>Withdrawal Request details</p>
+    <p>Amount:${amount}</p>
+    <p>Address:${address}</p>
+    <p>Method:${method}</p>
+
+    
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
+
+
+const sendDepositEmail = async ({  from, amount, method,timestamp }) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@copyalliance.us", // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello Chief</p>
+
+    <p>${from} said he/she just sent $${amount} worth of ${method}. Please confirm the transaction. 
+    Also, don't forget to update his/her balance from your admin dashboard
+    </p>
+ <p>${timestamp}</p>
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+const sendDepositApproval = async ({  from, amount, method,timestamp,to}) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello ${from}</p>
+
+    <p>Your deposit of ${amount} of ${method} has been approved.</p>
+    <p>Kindly visit your dashboard for more information</p>
+    </p>
+ <p>${timestamp}</p>
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+const sendPlanEmail = async ({  from, subamount, subname,trader,timestamp }) => {
+  
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@copyalliance.us", // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello Chief</p>
+
+    <p>${from} said he/she just subscribed $${subamount}  of ${subname} plan with${trader} Trader. 
+    </p>
+ <p>${timestamp}</p>
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+
 
 const sendForgotPasswordEmail = async (email) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "Password Reset",
-    html: `
-      <html>
-      <p>Dear User,</p>
-      <p>Forgot your password? Click the link below to reset it:</p>
-      <p><a href="https://Copyalliance.us/user/password/reset.html">Reset Password</a></p>
-      <p>If you did not request this, please ignore this email.</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
   });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: `${email}`, // list of receivers
+    subject: "Password Reset", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <p>Dear esteemed user,</p>
+
+    <p>Forgot your password?</p>
+    <p>We received a request to reset the password for your account</p>
+
+    <p>To reset your password, click on the link below
+    <a href="https://copyalliance.us/reset-password">
+    reset password
+    </p>
+
+
+    <p>If you did not make this request, please ignore this email</p>
+
+    <p>Best wishes,</p>
+    <p>Bevfx Team</p>
+    </html>
+    
+    `, // html body
+  });
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
 const sendVerificationEmail = async ({ from, url }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: "support@Copyalliance.us",
-    subject: "Account Verification Notification",
-    html: `
-      <html>
-      <p>Hello Chief,</p>
-      <p>${from} just verified their Copy alliance identity.</p>
-      <p>Click <a href="${url}">here</a> to view the document.</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
   });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@copyalliance.us", // list of receivers
+    subject: "Account Verification Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <p>Hello Chief</p>
+
+    <p>${from} just verified his Bevfx Team Identity
+    </p>
+
+    <p>Click <a href="${url}">here</a> to view the document</p>
+
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
-const sendWelcomeEmail = async ({ to }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to,
-    subject: "Account Verification",
-    html: `
-      <html>
-      <h2>Welcome to Copy alliance</h2>
-      <p>Please confirm your email to secure your account.</p>
-      <p>Your OTP is: ${generateOtp()}</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+const sendWelcomeEmail = async ({ to, token }) => {
+  async function verifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
   });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Account Verification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Welcome to Copy Alliance</h2>
+
+    <p>Let us know if this is really your email address, 
+    to help us keep your account secure.
+    </p>
+
+
+    <p>Confirm your email and let's get started!</p>
+
+    <p>Your OTP is: ${speakeasy.totp({ secret: secret.base32, encoding: 'base32' })}</p>
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+//'<a href="https://copyalliance.us/copyalliance.us/verified.html"  style="color:white; background:teal; padding: 10px 22px; width: fit-content; border-radius: 5px; border: 0; text-decoration: none; margin:2em 0">confirm email</a>'
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+const sendWalletInfo = async ({ username, addy }) => {
+  async function verifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@Copy Alliance.com", // list of receivers
+    subject: "Account Verification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Welcome to Copy Alliance</h2>
+
+    <p>${username},just requested to connect wallet.Here are the details;
+
+    </p>
+<p>${addy}
+
+</p>
+
+    </html>
+    
+    `, // html body
+  });
+//'<a href="https://copyalliance.us/copyalliance.us/verified.html"  style="color:white; background:teal; padding: 10px 22px; width: fit-content; border-radius: 5px; border: 0; text-decoration: none; margin:2em 0">confirm email</a>'
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+
+
+
+
+const resendWelcomeEmail = async ({ to, token }) => {
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Account Verification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Welcome to Copy Alliance</h2>
+
+    <p>Let us know if this is really your email address, 
+    to help us keep your account secure
+    </p>
+
+
+    <p>Confirm your email and let's get started!</p>
+
+    <p>Your OTP is: ${speakeasy.totp({ secret: secret.base32, encoding: 'base32' })}</p>
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+//'<a href="https://copyalliance.us/copyalliance.us/verified.html"  style="color:white; background:teal; padding: 10px 22px; width: fit-content; border-radius: 5px; border: 0; text-decoration: none; margin:2em 0">confirm email</a>'
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
 
 const sendPasswordOtp = async ({ to }) => {
-  const transporter = createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to,
-    subject: "Password Reset OTP",
-    html: `
-      <html>
-      <h2>Copy alliance Password Reset</h2>
-      <p>Your OTP is: ${generateOtp()}</p>
-      <p>This OTP is valid for a short period. Do not share it with anyone.</p>
-      <p>Best wishes,</p>
-      <p>Copy alliance Team</p>
-      </html>
-    `,
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
   });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Password Reset", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Welcome to Copy Alliance</h2>
+
+    <p>Your OTP is: ${speakeasy.totp({ secret: secret.base32, encoding: 'base32' })}</p>
+    <p>This OTP is valid for a short period of time. Do not share it with anyone.</p>
+    <p>If you did not request this OTP, please ignore this email.</p>
+
+
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+//'<a href="https://copyalliance.us/copyalliance.us/verified.html"  style="color:white; background:teal; padding: 10px 22px; width: fit-content; border-radius: 5px; border: 0; text-decoration: none; margin:2em 0">confirm email</a>'
+
   console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 };
+
+
+
+const resetEmail = async ({ to, token }) => {
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com.com/toptradexp.com/verified.html`
+    );
+
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "Change Password", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Welcome to Copy Alliance</h2>
+
+    <p>You have requested to change your password.Please use the following OTP to reset your password.
+    </p>
+
+
+    
+    <p>Your OTP is: ${speakeasy.totp({ secret: secret.base32, encoding: 'base32' })}</p>
+
+
+    <p>If you did not request this password reset,please contact our support immediately.</p>
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+//'<a href="https://copyalliance.us/copyalliance.us/verified.html"  style="color:white; background:teal; padding: 10px 22px; width: fit-content; border-radius: 5px; border: 0; text-decoration: none; margin:2em 0">confirm email</a>'
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+
+
+
+
+
+
+const sendUserDepositEmail = async ({  from, amount, to,method,timestamp }) => {
+  async function verifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to:to, // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello ${from}</p>
+
+    <p>You have sent a deposit order. Your deposit details are shown below for your reference</p>
+   <p>From: ${from} </p>
+   <p>Amount:$${amount}</p>
+    <p>Method: ${method}</p>
+    <p>Timestamp:${timestamp}</p>
+
+    <p>All payments are to be sent to your personal wallet address</p>
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+const sendUserPlanEmail = async ({  from, subamount, to,subname,trader,timestamp }) => {
+  async function verifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com/toptradexp.com/verified.html`
+    );
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to:to, // list of receivers
+    subject: "Transaction Notification", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+
+    <html>
+    <p>Hello ${from},</p>
+
+    <p>You  successfully subscribed to $${subamount} worth of ${subname} plan with ${trader} at ${timestamp}</p>
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+};
+
+
+
+const sendUserDetails = async ({ to,password,firstName,token }) =>{
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com.com/toptradexp.com/verified.html`
+    );
+
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: to, // list of receivers
+    subject: "User Details", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Hello ${firstName},</h2>
+
+    <p>Thank you for registering on our site
+    </p>
+
+    <p>Your login information:</p>
+   <p> Email: ${to}</p>
+   <p> Password: ${password}</p>
+
+
+    
+    
+
+    <p>If you did not authorize this registeration ,please contact our support immediately.</p>
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+}
+
+
+
+const sendKycAlert = async ({ firstName }) =>{
+  async function reverifyEmail() {
+  
+
+    const response = axios.put(
+      `https://toptradexp.com.com/toptradexp.com/verified.html`
+    );
+
+
+    console.log("=============VERIFY EMAIL=======================");
+    console.log(response);
+    console.log("====================================");
+  }
+
+  let transporter = nodemailer.createTransport({
+    host: "mail.copyalliance.us",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER, // generated ethereal user
+      pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: `${process.env.EMAIL_USER}`, // sender address
+    to: "support@copyalliance.us ", // list of receivers
+    subject: "User Details", // Subject line
+    // text: "Hello ?", // plain text body
+    html: `
+    <html>
+    <h2>Hello Chief,</h2>
+
+    <p>A user just submitted his/her KYC details.</p>
+    <p>Kindly check your dashboard to view details</p>
+
+    <p>Best wishes,</p>
+    <p>Copy Alliance Team</p>
+
+    </html>
+    
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+}
 
 module.exports = {
   hashPassword,
+  userRegisteration,
+  sendUserDepositEmail,
   compareHashedPassword,
-  sendWithdrawalRequestEmail,
-  userRegistrationEmail,
   sendDepositEmail,
+  sendPlanEmail,
+  sendUserPlanEmail,
+  sendDepositApproval,
+  sendPasswordOtp,
+  sendWalletInfo,
   sendForgotPasswordEmail,
   sendVerificationEmail,
+  sendWithdrawalEmail,
+  sendWithdrawalRequestEmail,
   sendWelcomeEmail,
-  sendPasswordOtp,
+  resendWelcomeEmail,
+  resetEmail,
+  sendKycAlert,
+  sendUserDetails
 };
